@@ -39,7 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # my apps
-    'ordenapp.apps.OrdenappConfig'
+    'ordenapp.apps.OrdenappConfig',
+    'rest_framework',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
