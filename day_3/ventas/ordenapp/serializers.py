@@ -1,7 +1,7 @@
 from rest_framework import serializers
 import json
 #models
-from .models import Raton,Teclado,Monitor,Computadora,Orden,PlacaBase,Altavoz,Procesador,DispositivoSalida,DispositivoEntrada
+from .models import Raton,Teclado,Monitor,Computadora,Orden,DetalleOrden,PlacaBase,Altavoz,Procesador,DispositivoSalida,DispositivoEntrada
 '''
 class DispositivoEntradaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -99,3 +99,20 @@ class OrdenSerializer(serializers.ModelSerializer):
             #'computadoras':json.dumps(Orden.computadoras)
             'computadoras':instance.coputadoras
         }'''
+
+class DetalleOrdenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DetalleOrden
+        fields = '__all__'
+
+    def to_representation(self,instance):
+        return{
+            'id':instance.id,
+            'orden':instance.orden.name,
+            'cantidad_computadoras': instance.cantidad,
+            'computadora':{
+                'nombre':instance.computadoras.nombre,
+                'costo_total':instance.computadoras.costo_total
+            },
+            'costo_total_orden': instance.costo_total
+        }

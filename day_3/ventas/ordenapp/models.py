@@ -1,11 +1,20 @@
-from copyreg import constructor
+
 from pyexpat import model
 from django.db import models
 from markupsafe import _MarkupEscapeHelper
+from requests import request
 # Create your models here.
 
 class Componente(models.Model):
-    tipoComponente = models.CharField(max_length=50)
+    component = (
+        ('keyboard','teclado'),
+        ('mouse','raton'),
+        ('display','monitor'),
+        ('speaker','altavoz'),
+        ('motherboard','placa base'),
+        ('processor','procesador'),
+    )
+    tipoComponente = models.CharField(max_length=50,choices=component)
 
     class Meta:
         abstract = True
@@ -136,7 +145,7 @@ class Computadora(models.Model):
 
     def save(self,*args,**kwargs):
         resultado = self.decrementar_cantidad()
-        print('>>>>>RRRRR>>>>>>',resultado)
+        #print('>>>>>RRRRR>>>>>>',resultado)
         if resultado>0:
             self.costo_total = resultado
             super(Computadora,self).save(*args,**kwargs)
@@ -153,15 +162,49 @@ class Computadora(models.Model):
 
 class Orden(models.Model):
     """Model representing an Orden"""
-    computadoras = models.ManyToManyField(Computadora)
-    total_costo_orden = models.FloatField(null=True,blank=True)
+    #computadoras = models.ManyToManyField(Computadora)
+    name = models.CharField(max_length=50)
+    descripcion = models.CharField(max_length=200)
+    #total_costo_orden = models.FloatField(null=True,blank=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'{self.computadoras}'
+        return f'{self.name}'
 
+    '''def save(self,*args,**kwargs):
+        #print('-------->', self.request.data)
+        result = self.computadoras.values_list('id',flat=True)
+        print('rrrrr ',result)
+        #super(Orden,self).save(*args,**kwargs)
+        #orden = Orden.objects.filter(id=self.id)
+        #print(orden)
 
-''''
+    def decrementar_computadoras(self,lista_computadoras):
+        print('lista ->',lista_computadoras)
+        
+
+        return True'''
+        
+        
+
+class DetalleOrden(models.Model):
+    """Model representing an DetalleOrden"""
+    orden = models.ForeignKey(Orden,on_delete=models.CASCADE)
+    computadoras = models.ForeignKey(Computadora,on_delete=models.CASCADE)
+    cantidad = models.IntegerField()
+    costo_total =  models.FloatField(null=True,blank=True)
+
+    def __str__(self):
+        return f'{self.costo_total}'
+
+    def decrementar_cantidad(self):
+        pass
+
+    def save(self,*args,**kwargs):
+        self.costo_total = self.cantidad * (self.computadoras.costo_total)
+        super(DetalleOrden,self).save(*args,**kwargs)
+
+'''
 self.costo_total = self.monitor.costo + self.altavoz.costo + self.placaBase.costo + self.procesador.costo + self.raton.costo+ self.teclado.costo
 
         Monitor.objects.filter(id=self.monitor.id).update(cantidad = models.F('cantidad')-1)

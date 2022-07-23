@@ -4,12 +4,13 @@
 from django import views
 from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework import generics
 
 #models
-from .models import Raton,Teclado,Monitor,Computadora,Orden,PlacaBase,Altavoz,Procesador,DispositivoSalida,DispositivoEntrada
+from .models import Raton,Teclado,Monitor,Computadora,Orden,DetalleOrden, PlacaBase,Altavoz,Procesador,DispositivoSalida,DispositivoEntrada
 
 #serializers
-from .serializers import RatonSerializer,TecladoSerializer,MonitorSerializer,ComputadoraSerializer,OrdenSerializer,PlacaBaseSerializer,AltavozSerializer,ProcesadorSerializer,DispositivoSalidaSerializer,DispositivoEntradaSerializer
+from .serializers import RatonSerializer,TecladoSerializer,MonitorSerializer,ComputadoraSerializer,OrdenSerializer,DetalleOrdenSerializer, PlacaBaseSerializer,AltavozSerializer,ProcesadorSerializer,DispositivoSalidaSerializer,DispositivoEntradaSerializer
 '''
 class DispositivoEntradaViewSet(viewsets.ModelViewSet):
     queryset = DispositivoEntrada.objects.all()
@@ -63,13 +64,76 @@ class ComputadoraViewSet(viewsets.ModelViewSet):
 
     def create(self,request,*args,**kwargs):
         pc = super().create(request,*args,**kwargs)
-        print('----------->',pc.data)
+        #print('----------->',pc.data)
         if pc.data['costo_total'] is not None:
             return pc
         else:
             return Response({"message":"No hay stock"})
 
 
+class DetalleOrdenViewSet(viewsets.ModelViewSet):
+    queryset = DetalleOrden.objects.all()
+    serializer_class = DetalleOrdenSerializer
+
+
 class OrdenViewSet(viewsets.ModelViewSet):
     queryset = Orden.objects.all()
     serializer_class = OrdenSerializer
+
+    '''def create(self,request,*args,**kwargs):
+        #print('-------->',request.data.get('computadoras'))
+        return Response({"message": request.data.get('computadoras')})
+
+    def create(self,request,*args,**kwargs):
+        ordenn = super().create(request,*args,**kwargs)
+        print('----------->',ordenn.data)
+        return Response({"message":"No hay stock kkkk"})
+
+        if pc.data['costo_total'] is not None:
+            return pc
+        else:
+            return Response({"message":"No hay stock"})'''
+
+
+class ComponenteTipoView(generics.ListAPIView):#componentetipo/?componente=dispositivoentrada
+    serializer_class = DispositivoEntradaSerializer
+
+    def get_queryset(self):
+
+        llave = list(self.request.query_params.keys())[0]# se obtiene el nombre de la variable del parametro
+        #print(llave)
+
+        if llave == 'marca':
+            marcadisp = self.request.query_params.get(llave)
+            entrada = DispositivoEntrada.objects.filter(marca__contains=marcadisp)
+            salida = DispositivoSalida.objects.filter(marca__contains=marcadisp)
+            return entrada.union(salida)
+
+        elif llave == 'componente':
+            # componente trae el valor de llave, llave es el nombre del parametro
+            componente = self.request.query_params.get(llave)
+
+            if componente == 'dispositivoentrada':
+                dispositivo_entrada = DispositivoEntrada.objects.all()
+                return dispositivo_entrada
+
+            elif componente == 'dispositivosalida':
+                dispositivo_salida = DispositivoSalida.objects.all()
+                return dispositivo_salida
+
+            else:
+                return None
+
+
+
+
+        
+        
+
+        
+        
+        
+
+
+
+        
