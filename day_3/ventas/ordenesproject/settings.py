@@ -42,9 +42,11 @@ INSTALLED_APPS = [
     'ordenapp.apps.OrdenappConfig',
     'rest_framework',
     'drf_yasg',
+    "corsheaders",#cors
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",#cors
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -115,6 +117,16 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:5173',
+    'http://localhost:8000',
+)
+
+'''CORS_ALLOWED_ORIGINS = [
+    'http://127.0.0.1:5173',
+    'http://localhost:8000',
+]'''
 
 
 # Static files (CSS, JavaScript, Images)

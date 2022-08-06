@@ -6,7 +6,10 @@ from django.urls import path
 from rest_framework.routers import DefaultRouter
 
 #views
-from .views import ComponenteTipoView,TecladoViewSet,RatonViewSet,MonitorViewSet,ComputadoraViewSet,OrdenViewSet,DetalleOrdenViewSet, PlacaBaseViewSet,AltavozViewSet,ProcesadorViewSet,DispositivoSalidaViewSet,DispositivoEntradaViewSet
+#from .views import ComponenteTipoView,TecladoViewSet,RatonViewSet,MonitorViewSet,ComputadoraViewSet,OrdenViewSet,DetalleOrdenViewSet, PlacaBaseViewSet,AltavozViewSet,ProcesadorViewSet,DispositivoSalidaViewSet,DispositivoEntradaViewSet
+from .viewsets.component import PlacaBaseViewSet,AltavozViewSet,ProcesadorViewSet,TecladoViewSet,RatonViewSet,MonitorViewSet
+from .viewsets.computer import ComputadoraViewSet
+from .viewsets.order import OrdenViewSet,DetalleOrdenViewSet,ComponenteTipoView
 
 
 router = DefaultRouter()
